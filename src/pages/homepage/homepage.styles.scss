@@ -1,0 +1,177 @@
+.board-container {
+  width: 100vw;
+  max-width: 100%;
+  min-height: 100vh;
+  min-width: 1100px;
+  background-color: rgb(49, 49, 49);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid red;
+
+  .board {
+    position: relative;
+    margin-left: -200px;
+    width: 40vw;
+    height: 70vh;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 1);
+    background-color: rgb(49, 122, 0);
+
+    // @media screen and (max-width: 1000px) {
+    //   width: 50vw;
+    // }
+
+    // @media screen and (max-height: 700px) {
+    //   height: 50vh;
+    // }
+
+    .black-cards {
+      position: absolute;
+      width: 80px;
+      height: 120px;
+      border: 1px solid white;
+      background-color: black;
+      color: white;
+      text-align: center;
+      left: 50%;
+      top: 5%;
+      transform: translate(-50%);
+      cursor: pointer;
+
+      p {
+        position: absolute;
+        left: -18px;
+        top: 40px;
+        width: 150%;
+        transform: rotate(-60deg);
+      }
+    }
+
+    .revealed-black-card {
+      position: absolute;
+      width: 100px;
+      height: 150px;
+      border: 1px solid white;
+      background-color: black;
+      color: white;
+      padding: 5px;
+      left: 10%;
+      top: 30%;
+      cursor: pointer;
+      transition: transform .2s ease-in-out;
+
+      &:hover {
+        transform: scale(1.3);
+      }
+    }
+
+    .player-container {
+      position: absolute;
+      border-radius: 50%;
+      bottom: -80px;
+      width: 60px;
+      height: 60px;
+
+      &:nth-child(1) {
+        bottom: -80px;
+        left: 50%;
+        transform: translate(-50%);
+      }
+
+
+      &:nth-child(2) {
+        top: -80px;
+        left: 50%;
+        transform: translate(-50%);
+      }
+
+      &:nth-child(3) {
+        bottom: 20%;
+        left: -50px;
+        transform: translate(0);
+      }
+
+      &:nth-child(4) {
+        top: 20%;
+        right: -50px;
+        transform: translate(0);
+        
+      }
+
+      &:nth-child(5) {
+        top: 20%;
+        left: -50px;
+        transform: translate(0);
+      }
+
+      &:nth-child(6) {
+        bottom: 20%;
+        right: -50px;
+        transform: translate(0);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+      }
+
+      .points {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 40%;
+        height: 40%;
+        border-radius: 50%;
+        background-color: rgba(24, 24, 24, 1);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 4;
+      }
+    }
+  }
+
+  .player-cards {
+    position: absolute;
+    width: calc(50% + 50px);
+    height: 28%;
+    right: 0;
+    bottom: 0;
+
+    .card {
+      position: absolute;
+      counter-increment: cards;
+      bottom: 0;
+      border: 1px solid rgb(43, 43, 43);
+      width: 15%;
+      height: 60%;
+      background-color: white;
+      cursor: pointer;
+      box-shadow: -5px 5px 50px black;
+      z-index: 1;
+      transition: all .2s ease-in-out;
+
+      @for $i from 2 through 10 {
+        $zindex: 2;
+        &:nth-child(#{$i}) {
+          left: 10% * ($i - 1);
+          z-index: $zindex + $i;
+        }
+      }
+
+      &:hover {
+        z-index: 20;
+        width: 17%;
+        height: 100%;
+
+        &:nth-last-child(1) {
+          left: 83%;
+        }
+      }
+    }
+  }
+}
+
