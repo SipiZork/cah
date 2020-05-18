@@ -7,7 +7,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid red;
 
   .board {
     position: relative;
@@ -148,6 +147,7 @@
       border: 1px solid rgb(43, 43, 43);
       width: 15%;
       height: 60%;
+      padding: 5px;
       background-color: white;
       cursor: pointer;
       box-shadow: -5px 5px 50px black;
