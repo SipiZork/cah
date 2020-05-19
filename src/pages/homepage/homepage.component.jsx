@@ -41,8 +41,20 @@ const HomePage = () => (
             <span>6</span>
         </div>
       </div>
-      <div className="black-cards"><p>Cards Againts Humanity</p></div>
-      <div className="revealed-black-card"><p>Tegnap ____ volt nálam. Nagyon élveztem.</p></div>
+      <div className="cards-wrapper">
+        <div className="black-card-wrapper">
+          <div className="black-cards"><p>Cards Against Humanity</p></div>
+          <div className="revealed-black-card"><p>Tegnap ____ volt nálam. Nagyon élveztem.</p></div>      
+        </div>
+        <div className="white-card-wrapper">
+          <div className="revealed-white-card"><p>Mókus</p></div>
+          <div className="revealed-white-card"><p>Prosti</p></div>
+          <div className="revealed-white-card"><p>Keresztény pap</p></div>
+          <div className="white-card"><p>Cards Against Humanity</p></div>
+          <div className="white-card"><p>Cards Against Humanity</p></div>
+          <div className="white-card"><p>Cards Against Humanity</p></div>
+        </div>
+      </div>
     </div>
     <div className="player-cards">
       <div className="card">
