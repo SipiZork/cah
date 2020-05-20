@@ -49,7 +49,7 @@ const HomePage = () => (
         <div className="white-card-wrapper">
           <div className="revealed-white-card"><p>Mókus</p></div>
           <div className="revealed-white-card"><p>Prosti</p></div>
-          <div className="revealed-white-card"><p>Keresztény pap</p></div>
+          <div className="revealed-white-card"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc ac interdum ipsum. Donec sed velit euismod</p></div>
           <div className="white-card"><p>Cards Against Humanity</p></div>
           <div className="white-card"><p>Cards Against Humanity</p></div>
           <div className="white-card"><p>Cards Against Humanity</p></div>
