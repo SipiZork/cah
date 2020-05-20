@@ -7,6 +7,7 @@ class SignUp extends React.Component {
   state = {
     username: '',
     password: '',
+    email: '',
     passwordAgain: ''
   }
 
@@ -30,6 +31,14 @@ class SignUp extends React.Component {
             required
           />
           <FormInput
+            type="text"
+            label="Email cím"
+            name="email"
+            value={this.state.email}
+            handleChange={this.handleChange}
+            required
+          />
+          <FormInput
             type="password"
             label="Jelszó"
             name="password"
@@ -39,9 +48,9 @@ class SignUp extends React.Component {
           />
           <FormInput
             type="password"
-            label="Jelszó"
+            label="Jelszó ismét"
             name="passwordAgain"
-            value={this.state.password}
+            value={this.state.passwordAgain}
             handleChange={this.handleChange}
             required
           />
