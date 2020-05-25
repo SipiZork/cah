@@ -16,7 +16,6 @@ class CreateRoom extends React.Component {
   }
 
   handleChange = event => {
-    console.log(this.props.currentUser)
     const { name, value } = event.target
     this.setState({
       [name]: value

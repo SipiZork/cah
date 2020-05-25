@@ -8,18 +8,36 @@ class Lobby extends React.Component {
   state = {
     liveBoards: []
   }
-  componentDidMount() {
-    let liveBoards = []
+  componentDidMount() {    
+    /*let loadedBoards = []
     firestore
-      .collection('boards')
-      .where('live', '==', true)
-      .orderBy('createdAt', 'desc')
-      .onSnapshot(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          liveBoards.push({...doc.data(), id: doc.id})
-          this.setState({ liveBoards })
-        })
+    .collection('boards')
+    .where('live', '==', true)
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(querySnapshot => {
+      querySnapshot.forEach(doc => {
+        loadedBoards.push({ ...doc.data(), id: doc.id })
+        this.setState({ liveBoards: loadedBoards })
       })
+    }) */
+
+    this.boardListener()
+
+  }
+
+  boardListener = () => {
+    let loadedBoards = []
+    console.log(loadedBoards)
+    firestore.collection('boards')
+    .where('live', '==', true)
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(querySnapshot => {
+      loadedBoards = []
+      querySnapshot.forEach(doc => {
+        loadedBoards.push({ ...doc.data(), id: doc.id })
+        this.setState({ liveBoards: loadedBoards })
+      })
+    })
   }
 
   displayBoards = boards => (
