@@ -12,6 +12,10 @@ export const LobbyContainer = styled.div`
   align-items: flex-start;
   background: ${basic.mainColor};
   overflow-y: scroll;
+  align-items: flex-start;
+  border: 1px solid red;
+  min-height: 100%;
+  max-height: 100%;
   
   &::-webkit-scrollbar {
     width: 10px;

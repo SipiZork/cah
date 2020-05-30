@@ -50,13 +50,16 @@ class CreateRoom extends React.Component {
   }
 
   dataIsValid = () => {
-    const { goalPoint, cardPacks } = this.state
-    if (!Number.isInteger(parseInt(goalPoint))) {
+    const { boardName, goalPoint, cardPacks } = this.state
+    if (boardName.length > 25) {
+      this.setState({ errors: 'Túl hosszú a szoba neve (maximum 25 karakter)' })
+      return false
+    } else if (!Number.isInteger(parseInt(goalPoint))) {
       this.setState({ errors: 'Nem számot adtál meg nyerési pontszámnak' })
-      return false;
+      return false
     } else if (goalPoint > 20 || goalPoint < 2) {
       this.setState({ errors: 'Nem megfelelő nyeréshez szükséges pontszámot adtál meg (minimum 2, max 20)' })
-      return false;
+      return false
     }
     return true
   }

@@ -6,10 +6,10 @@ import * as basic from '../../css/variables'
 export const BoardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 25%;
-  min-width: 300px;
-  height: 200px;
-  margin: 10px 15px 5px 0;
+  min-width: 320px;
+  max-width: 320px;
+  flex: 1 1 auto;
+  margin: 10px 8px 5px 8px;
   padding: .5rem;
   align-items: center;
   position: relative;
@@ -18,6 +18,7 @@ export const BoardContainer = styled.div`
 
 export const BoardTitle = styled.h3`
   font-size: 1.3rem;
+  text-align: center;
 `
 
 export const BoardStatus = styled.p`
