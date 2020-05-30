@@ -1,5 +1,19 @@
 import styled, {css} from 'styled-components'
 
+import * as basic from '../../css/variables' 
+
+const rightHumanPosition = css`
+  left: 320px;
+`
+
+const leftHumanPosition = css`
+  left: 220px;
+`
+
+const regularHumanPosition = css`
+  left: 270px;
+`
+
 const leftCard = css`
   background-color: black;
   transform: rotate(-30deg);
@@ -65,21 +79,31 @@ const getTitleColor = props => {
   return titleColor
 }
 
+const getHumanPosition = props => {
+  if (props.left) {
+    return leftHumanPosition;
+  } else if (props.right) {
+    return rightHumanPosition
+  }
+  return regularHumanPosition
+}
+
 export const HeaderContainer = styled.div`
   width: 100vw;
   min-width: 1100px;
   max-width: 100%;
   height: 120px;
-  background-color: rgb(100, 100, 100);
+  background-color: ${basic.mainColor};
   position: relative;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
+  flex: 0;
 `
 
 export const LogoContainer = styled.div`
-  width: 550px;
+  width: 435px;
   height: 120px;
   position: relative;
   margin-right: 20px;
@@ -98,7 +122,7 @@ export const LogoText = styled.p`
   position: absolute;
   bottom: 5px;
   font-size: 50px;
-  left: 200px; 
+  left: 170px; 
   color: rgb(255, 255, 255);
   text-shadow: -1px 1px 0 #000, 
                 1px 1px 0 #000, 
@@ -107,10 +131,10 @@ export const LogoText = styled.p`
 `
 
 export const LogoHumanContainer = styled.div`
-  position: relative;
+  position: absolute;
   width: 120px;
   height: 100%;
-  left: 280px;
+  ${getHumanPosition}
 `
 
 export const LogoHumanHead = styled.div`
@@ -144,7 +168,7 @@ export const LogoHumanBody = styled.path`
 `
 
 export const LogoTitleContainer = styled.div`
-  width: 100%;
+  flex-grow: 1;
 `
 
 export const LogoTitleText = styled.h1`
@@ -155,4 +179,8 @@ export const LogoTitleText = styled.h1`
   display: inline-block;
   margin-right: 15px;
   ${getTitleColor}
+
+  @media screen and (max-width:1180px){
+    font-size: 3.4rem;
+  }
 `

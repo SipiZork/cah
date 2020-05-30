@@ -12,6 +12,24 @@ const Header = () => {
         <LogoCard left />
         <LogoCard right />
         <LogoText>vs</LogoText>
+        <LogoHumanContainer left>
+          <LogoHumanHead />
+          <LogoHumanBodyContainer>
+            <svg>
+            <LogoHumanBody border></LogoHumanBody> 
+            <LogoHumanBody line></LogoHumanBody>  
+            </svg>
+          </LogoHumanBodyContainer>
+        </LogoHumanContainer>
+        <LogoHumanContainer right>
+          <LogoHumanHead />
+          <LogoHumanBodyContainer>
+            <svg>
+            <LogoHumanBody border></LogoHumanBody> 
+            <LogoHumanBody line></LogoHumanBody>  
+            </svg>
+          </LogoHumanBodyContainer>
+        </LogoHumanContainer>
         <LogoHumanContainer>
           <LogoHumanHead />
           <LogoHumanBodyContainer>

@@ -12,7 +12,8 @@ class CreateRoom extends React.Component {
   state = {
     boardName: '',
     password: '',
-    goalPoint: ''
+    goalPoint: '',
+    errors: ''
   }
 
   handleChange = event => {
@@ -24,24 +25,38 @@ class CreateRoom extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault()
-    const { username, id } = this.props.currentUser 
-    const { boardName, password, goalPoint } = this.state
-    const timeToId = new Date()
-    const boardData = {
-      creatorUsername: username,
-      creatorId: id,
-      boardName,
-      password,
-      goalPoint,
+    if (this.dataIsValid()) {
+      const { boardName, password, goalPoint } = this.state
+      const { username, id } = this.props.currentUser 
+      const boardData = {
+        creatorUsername: username,
+        creatorId: id,
+        boardName,
+        password,
+        goalPoint,
+      }
+    
+      createLiveGame(boardData, { live: true, creator: id, status: 'waiting' })
+    
+      this.setState({
+        boardName: '',
+        password: '',
+        goalPoint: '',
+        errors: ''
+      })
     }
+  }
 
-    createLiveGame(boardData, {live: true, creator: id})
-
-    this.setState({
-      boardName: '',
-      password: '',
-      goalPoint: ''
-    })
+  dataIsValid = () => {
+    const { goalPoint } = this.state
+    if (!Number.isInteger(parseInt(goalPoint))) {
+      this.setState({ errors: 'Nem számot adtál meg nyerési pontszámnak' })
+      return false;
+    } else if (goalPoint > 20 || goalPoint < 2) {
+      this.setState({ errors: 'Nem megfelelő nyeréshez szükséges pontszámot adtál meg (minimum 2, max 20)' })
+      return false;
+    }
+    return true
   }
 
   render() {
@@ -60,7 +75,7 @@ class CreateRoom extends React.Component {
           />
           <FormInput
             type="text"
-            label="Jelszó"
+            label="Jelszó (opcionális)"
             name="password"
             value={this.state.password}
             handleChange={this.handleChange}
@@ -74,7 +89,7 @@ class CreateRoom extends React.Component {
             handleChange={this.handleChange}
             autoComplete="off"
           />
-          <CreateRoomButton type="submit">Létrehozás</CreateRoomButton>
+          <CreateRoomButton inverted type="submit">Létrehozás</CreateRoomButton>
         </form>
       </CreateRoomContainer>
     )

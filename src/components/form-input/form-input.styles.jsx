@@ -1,10 +1,12 @@
 import styled, { css } from 'styled-components';
 
-const subColor = 'rgba(200,200,200,1)';
-const mainColor = 'white';
+import * as basic from '../../css/variables' 
+
+const subColor = 'rgba(50,50,50,1)';
+const mainColor = 'black';
 
 const shrinkLabelStyles = css`
-  top: -14px;
+  top: -18px;
   font-size: 12px;
   color: ${mainColor};
 `
@@ -19,7 +21,7 @@ export const GroupContainer = styled.div`
 
 export const FormInputContainer = styled.input`
   background: none;
-  background-color: transparent;
+  background-color: ${basic.inputColor};
   color: ${subColor};
   font-size: 18px;
   padding: 10px 10px 10px 5px;
@@ -27,7 +29,7 @@ export const FormInputContainer = styled.input`
   width: 100%;
   border: none;
   border-radius: 0;
-  border-bottom: 1px solid ${subColor};
+  /* border-bottom: 1px solid ${subColor}; */
   margin: 25px 0;
   &:focus {
     outline: none;

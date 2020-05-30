@@ -1,12 +1,13 @@
 import React from 'react'
 import { firestore } from '../../firebase/firebase.utils'
 
-import Board from '../board/board.component'
+import LobbyBoard from '../lobby-board/lobby-board.component'
 import { LobbyContainer } from './lobby.styles'
 
 class Lobby extends React.Component {
   state = {
-    liveBoards: []
+    liveBoards: [],
+    userCount: 0,
   }
   componentDidMount() {    
     /*let loadedBoards = []
@@ -21,31 +22,60 @@ class Lobby extends React.Component {
       })
     }) */
 
-    this.boardListener()
-
+    this.boardsListener()
   }
 
-  boardListener = () => {
-    let loadedBoards = []
-    console.log(loadedBoards)
+  boardsListener = () => {
+    const boardsRef = firestore.collection('boards')
+    boardsRef
+      .where('live', '==', true)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(querySnapshot => {
+        let loadedBoards = []
+        querySnapshot.forEach(doc => {
+          boardsRef.doc(doc.id).collection('players').onSnapshot(snapShot => {
+            this.setState(state => {
+              const boards = state.liveBoards.map(board => {
+                if (board.id === doc.id && board.playersNum !== snapShot.size) {
+                  board.playersNum = snapShot.size
+                }
+              })
+              return {
+                boards
+              }
+            })
+          })
+          boardsRef.doc(doc.id).collection('players').get().then(snapShot => {
+            loadedBoards.push({ ...doc.data(), id: doc.id, playersNum: snapShot.size })
+            this.setState({ liveBoards: loadedBoards })
+          })
+        })
+      })      
+  }
+
+  /*reloadBoards = () => {
     firestore.collection('boards')
-    .where('live', '==', true)
-    .orderBy('createdAt', 'desc')
-    .onSnapshot(querySnapshot => {
-      loadedBoards = []
-      querySnapshot.forEach(doc => {
-        loadedBoards.push({ ...doc.data(), id: doc.id })
-        this.setState({ liveBoards: loadedBoards })
-      })
+      .where('live', '==', true)
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(querySnapshot => {
+        let loadedBoards = []
+        querySnapshot.forEach(doc => {
+          firestore.collection('boards').doc(doc.id).collection('players').get().then(snapShot => {
+            loadedBoards.push({ ...doc.data(), id: doc.id, playersNum: snapShot.size })
+            this.setState({ liveBoards: loadedBoards })
+          })
+        })
     })
-  }
+  } */
 
-  displayBoards = boards => (
-    boards.length > 0 &&
-    boards.map(board => (
-      <Board key={board.id} boardData={board} />
-    ))
-  )
+  displayBoards = boards => {
+    let counter = 0;
+    return (boards.length > 0 &&
+      boards.map(board => {
+        return <LobbyBoard key={board.id} boardData={board} />
+      })
+    )
+  }
 
   render() {
     const { liveBoards } = this.state
