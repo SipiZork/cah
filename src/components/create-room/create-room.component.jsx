@@ -13,7 +13,8 @@ class CreateRoom extends React.Component {
     boardName: '',
     password: '',
     goalPoint: '',
-    errors: ''
+    errors: '',
+    cardPacks: ''
   }
 
   handleChange = event => {
@@ -26,7 +27,7 @@ class CreateRoom extends React.Component {
   handleSubmit = event => {
     event.preventDefault()
     if (this.dataIsValid()) {
-      const { boardName, password, goalPoint } = this.state
+      const { boardName, password, goalPoint, cardPacks } = this.state
       const { username, id } = this.props.currentUser 
       const boardData = {
         creatorUsername: username,
@@ -36,19 +37,20 @@ class CreateRoom extends React.Component {
         goalPoint,
       }
     
-      createLiveGame(boardData, { live: true, creator: id, status: 'waiting' })
+      createLiveGame(boardData, cardPacks, { live: true, creator: id, status: 'waiting' })
     
       this.setState({
         boardName: '',
         password: '',
         goalPoint: '',
-        errors: ''
+        errors: '',
+        cardPacks: ''
       })
     }
   }
 
   dataIsValid = () => {
-    const { goalPoint } = this.state
+    const { goalPoint, cardPacks } = this.state
     if (!Number.isInteger(parseInt(goalPoint))) {
       this.setState({ errors: 'Nem számot adtál meg nyerési pontszámnak' })
       return false;
@@ -69,7 +71,7 @@ class CreateRoom extends React.Component {
             label="Szoba neve"
             name="boardName"
             value={this.state.boardName}
-            handleChange={this.handleChange}
+          handleChange={this.handleChange}
             autoComplete="off"
             required
           />
@@ -88,6 +90,17 @@ class CreateRoom extends React.Component {
             value={this.state.goalPoint}
             handleChange={this.handleChange}
             autoComplete="off"
+            required
+          />
+          <FormInput
+            type="text"
+            label="Kártyapaklik vesszővel elválasztva"
+            name="cardPacks"
+            value={this.state.cardPacks}
+            handleChange={this.handleChange}
+            autoComplete="off"
+            labelFontSize="14"
+            required
           />
           <CreateRoomButton inverted type="submit">Létrehozás</CreateRoomButton>
         </form>

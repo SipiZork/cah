@@ -11,6 +11,14 @@ const shrinkLabelStyles = css`
   color: ${mainColor};
 `
 
+const getLabelFontSize = props => {
+  if (props.fontSize) {
+    return props.fontSize + 'px'
+  } else {
+    return '16px'
+  }
+}
+
 export const GroupContainer = styled.div`
   position: relative;
   margin: 30px 0;
@@ -41,7 +49,7 @@ export const FormInputContainer = styled.input`
 
 export const FormInputLabel = styled.label`
   color: ${subColor};
-  font-size: 16px;
+  font-size: ${getLabelFontSize};
   font-weight: normal;
   position: absolute;
   pointer-events: none;

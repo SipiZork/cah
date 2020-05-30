@@ -1,5 +1,8 @@
 import React from 'react'
-import { firestore } from '../../firebase/firebase.utils'
+import { connect } from 'react-redux'
+import { createStructuredSelector } from 'reselect'
+import { selectCurrentUser } from '../../redux/user/user.selectors'
+import { firestore, uploadCards, addCardsToGame, setUserStatus } from '../../firebase/firebase.utils'
 
 import LobbyBoard from '../lobby-board/lobby-board.component'
 import { LobbyContainer } from './lobby.styles'
@@ -23,6 +26,10 @@ class Lobby extends React.Component {
     }) */
 
     this.boardsListener()
+    // uploadCards()
+    console.log(this.props.currentUser.id)
+    setUserStatus(this.props.currentUser.id, 'inLobby')
+    // addCardsToGame('wo0ZiIjr6T5bYf5mOneB')
   }
 
   boardsListener = () => {
@@ -87,4 +94,8 @@ class Lobby extends React.Component {
   }
 }
 
-export default Lobby
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser
+})
+
+export default connect(mapStateToProps, null)(Lobby)

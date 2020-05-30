@@ -3,7 +3,7 @@ import { withRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 
-import { auth, createUserProfileDocument } from './firebase/firebase.utils'
+import { auth, createUserProfileDocument, setUserStatus } from './firebase/firebase.utils'
 import { setCurrentUser } from './redux/user/user.actions'
 import { selectCurrentUser } from './redux/user/user.selectors'
 
@@ -24,7 +24,7 @@ class App extends React.Component {
   unsubsribeFromAuth = null
 
   componentDidMount() {
-    const { setCurrentUser, history, location } = this.props
+    const { setCurrentUser, history, location, currentUser } = this.props
     console.log(location)
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
@@ -44,6 +44,7 @@ class App extends React.Component {
         this.setState({ loading: false })
       }
     })
+    console.log(currentUser)
   }
 
   componentWillUnmount() {

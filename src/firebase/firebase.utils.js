@@ -2,6 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/database'
 import 'firebase/auth'
+import { cards, cards2 } from '../cards'
 
 const config = {
   apiKey: "AIzaSyCcgPbAEwgwn9IaxmdtsM8ZpY1AXijPZLA",
@@ -18,22 +19,93 @@ export const getLiveBoards = async () => {
     .where('live', '==', true)
 }
 
-export const createLiveGame = (boardData, additionalData) => {
+export const uploadCards = () => {
+  const { name, white, black } = cards2
+  const ref = firestore.collection('packs').add({
+    white,
+    black,
+    name
+  })
+}
+
+export const addCardsToGame = board => {
+  firestore.collection('boards').doc(board).get()
+    .then(packsSnapshot => {
+      const { cardPacks } = packsSnapshot.data()
+      const promises = []
+      for (const pack in cardPacks) {
+        const p = firestore.doc(`packs/${pack}`).get()
+        promises.push(p)
+      }
+      return Promise.all(promises)
+    })
+    .then(packSnapshot => {
+      const blackCards = []
+      const whiteCards = []
+      packSnapshot.forEach(packSnap => {
+        const data = packSnap.data()
+        for (let i = 0; i < data.black.length; i++) {
+          blackCards.push(data.black[i])
+        }
+        for (let i = 0; i < data.white.length; i++) {
+          whiteCards.push(data.white[i])
+        }
+      })
+      console.log(blackCards)
+      firestore.collection('boards').doc(`${board}`).update({
+        blackCards: blackCards,
+        whiteCards: whiteCards
+      })
+    })
+}
+
+export const createLiveGame = (boardData, cardPacks, additionalData) => {
   if (!boardData) return
   const createdAt = new Date()
   const { boardName, password, goalPoint, creatorUsername } = boardData
-  firestore.collection(`boards`).add({
-    boardName,
-    password,
-    goalPoint,
-    createdAt,
-    ...additionalData
-  })
-    .then((docRef) => {
-      firestore.collection('boards').doc(docRef.id).collection('players').doc(additionalData.creator).set({
-        inGame: true,
-        points: 0
+  let packs = cardPacks.replace(/\s*,\s*/g, ",");
+  packs = packs.split(',')
+  let cardPacksForDatabase = {}
+  firestore.collection('packs').get().then((packSnapshot) => {
+    if (!packSnapshot.empty) {
+      packSnapshot.docs.map(doc => {
+        if (packs.includes(doc.data().name)) {
+         cardPacksForDatabase[doc.id] = true
+        }
       })
+    }
+  }).then(() => {
+    firestore.collection(`boards`).add({
+      boardName,
+      password,
+      goalPoint,
+      createdAt,
+      cardPacks: cardPacksForDatabase,
+      backCards: null,
+      whiteCards: null,
+      ...additionalData
+    })
+      .then((docRef) => {
+        firestore.collection('boards').doc(docRef.id).collection('players').doc(additionalData.creator).set({
+          inGame: true,
+          points: 0
+        })
+        firestore.collection('users').doc(additionalData.creator).update({
+          status: 'inGame',
+          gameSession: docRef.id
+        })
+      })
+  })
+}
+
+export const setUserStatus = (userId, status) => {
+  const userRef = firestore.collection('users').doc(userId)
+    userRef.get().then(userSnapshot => {
+      if (userSnapshot.data().status !== 'inGame') {
+        userRef.update({
+          status: status
+        })
+      }
     })
 }
 
@@ -54,6 +126,8 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
         email,
         createdAt,
         wins: 0,
+        status: 'login',
+        gameSession: null,
         ...additionalData
       })
     } catch (error) {
