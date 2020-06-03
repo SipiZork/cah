@@ -79,7 +79,7 @@ class Lobby extends React.Component {
     let counter = 0;
     return (boards.length > 0 &&
       boards.map(board => {
-        return <LobbyBoard key={board.id} boardData={board} />
+        return <LobbyBoard key={board.id} boardData={board} currentUser={this.props.currentUser} />
       })
     )
   }

@@ -11,11 +11,14 @@ import WithSpinner from './components/with-spinner/with-spinner.component'
 import Header from './components/header/header.components'
 import SignInSignUp from './components/sign-in-sign-up/sign-in-sign-up.components'
 import CreateRoomAndLobby from './components/create-room-and-lobby/create-room-and-lobby.component';
+import Board from './pages/board/board.component'
+import BoardHeader from './components/board-header/board-header.component'
 
 import './App.css';
 
 const SignInSignUpWithSpinner = WithSpinner(SignInSignUp)
 const CreateRoomAndLobbyWithSpinner = WithSpinner(CreateRoomAndLobby)
+const BoardWithSpinner = WithSpinner(Board)
 
 class App extends React.Component {
   state = {
@@ -25,18 +28,15 @@ class App extends React.Component {
 
   componentDidMount() {
     const { setCurrentUser, history, location, currentUser } = this.props
-    console.log(location)
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth)
-
-        userRef.onSnapshot(snapShot => {
+        
+        await userRef.onSnapshot(snapShot => {
           setCurrentUser({
             id: snapShot.id,
             ...snapShot.data()
           })
-          history.push('/lobby')
-          this.setState({ loading: false })
         })
       } else {
         setCurrentUser(null)
@@ -44,23 +44,48 @@ class App extends React.Component {
         this.setState({ loading: false })
       }
     })
-    console.log(currentUser)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { currentUser, history } = this.props
+    if (prevProps.currentUser !== currentUser && currentUser !== null) {
+      if (currentUser.status === 'inGame') {
+        history.push(`/board/${currentUser.gameSession}`)
+        this.setState({ loading: false })
+      } else {
+        history.push('/lobby')
+        this.setState({ loading: false })
+      }
+    }
   }
 
   componentWillUnmount() {
     this.unsubscribeFromAuth()
+  }
+
+  loadContent = () => {
+    const { currentUser } = this.state
+    console.log(currentUser)
   }
   
   render() {
     const { loading } = this.state
     return (
       <div className="wrapper">
-          <Header />
+        <Switch>
+          <Route exact path="/" component={Header} />
+          <Route exact path="/lobby" component={Header} />
+          <Route exact path="/board/:boardId" component={BoardHeader} />
+        </Switch>
           <Switch>
-          <Route exact path="/" render={(props) => <SignInSignUpWithSpinner isLoading={loading} {...props} />} />
-          <Route exact path="/lobby" render={(props) => <CreateRoomAndLobbyWithSpinner isLoading={loading} {...props} />} />
-            </Switch>
-            <div onClick={() => auth.signOut()}>Kilépés</div>
+            <Route exact path="/" render={(props) => <SignInSignUpWithSpinner isLoading={loading} {...props} />} />
+            <Route exact path="/lobby" render={(props) => <CreateRoomAndLobbyWithSpinner isLoading={loading} {...props} />} />
+            <Route exact path="/board/:boardId" render={(props) => <BoardWithSpinner isLoading={loading} {...props} />} />
+          </Switch>
+        <div onClick={() => {
+          auth.signOut()
+          setCurrentUser(null)
+        }}>Kilépés</div>
 
       </div>
     )

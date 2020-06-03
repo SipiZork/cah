@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/database'
 import 'firebase/auth'
-import { cards, cards2 } from '../cards'
+import { cards2 } from '../cards'
 
 const config = {
   apiKey: "AIzaSyCcgPbAEwgwn9IaxmdtsM8ZpY1AXijPZLA",
@@ -21,6 +21,7 @@ export const getLiveBoards = async () => {
 
 export const uploadCards = () => {
   const { name, white, black } = cards2
+  console.log(white)
   const ref = firestore.collection('packs').add({
     white,
     black,
@@ -51,12 +52,17 @@ export const addCardsToGame = board => {
           whiteCards.push(data.white[i])
         }
       })
-      console.log(blackCards)
+      shuffle(blackCards)
+      shuffle(whiteCards)
       firestore.collection('boards').doc(`${board}`).update({
         blackCards: blackCards,
         whiteCards: whiteCards
       })
     })
+}
+
+const shuffle = (array) => {
+  array.sort(() => Math.random() - 0.5)
 }
 
 export const createLiveGame = (boardData, cardPacks, additionalData) => {

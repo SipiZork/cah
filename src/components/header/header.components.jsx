@@ -31,11 +31,11 @@ const Header = () => {
           </LogoHumanBodyContainer>
         </LogoHumanContainer>
         <LogoHumanContainer>
-          <LogoHumanHead />
+          <LogoHumanHead inverted />
           <LogoHumanBodyContainer>
             <svg>
-            <LogoHumanBody border></LogoHumanBody> 
-            <LogoHumanBody line></LogoHumanBody>  
+            <LogoHumanBody border inverted></LogoHumanBody> 
+            <LogoHumanBody line inverted></LogoHumanBody>  
             </svg>
           </LogoHumanBodyContainer>
         </LogoHumanContainer>

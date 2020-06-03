@@ -34,9 +34,21 @@ const bodyStroke = css`
   stroke-width: 6;
 `
 
+const bodyStrokeInverted = css`
+  d: path("M7 49 Q 60 -29 110 49 ");
+  stroke: #000;
+  stroke-width: 6;
+`
+
 const bodyBorder = css`
   d: path("M5 50 Q 60 -30 112 50 ");
   stroke: #000;
+  stroke-width: 10;
+`
+
+const bodyBorderInverted = css`
+  d: path("M5 50 Q 60 -30 112 50 ");
+  stroke: #fff;
   stroke-width: 10;
 `
 
@@ -56,6 +68,17 @@ const titleInvertedColor = css`
             -1px -1px 0 #fff;
 `
 
+const HumanHeadColor = css`
+  background: #000;
+  border: 1px solid #fff;
+`
+
+const HumanHeadColorInverted = css`
+  background: #fff;
+  border: 1px solid #000;
+`
+
+
 const getCard = props => {
   if (props.left) {
     return leftCard
@@ -64,10 +87,23 @@ const getCard = props => {
   }
 }
 
+const getHumanHeadColor = props => {
+  if (props.inverted) {
+    return HumanHeadColorInverted
+  }
+  return HumanHeadColor
+}
+
 const getBody = props => {
   if (props.border) {
+    if (props.inverted) {
+      return bodyBorderInverted
+    }
     return bodyBorder
   } else if (props.line) {
+    if (props.inverted) {
+      return bodyStrokeInverted
+    }
     return bodyStroke
   }
 }
@@ -139,15 +175,13 @@ export const LogoHumanContainer = styled.div`
 
 export const LogoHumanHead = styled.div`
   border-radius: 50%;
-  background-color: black;
-  border: white;
+  ${getHumanHeadColor};
   width: 50px;
   height: 50px;
   position: absolute;
   left: 50%;
   transform: translate(-50%);
   top: 10px;
-  border: 1px solid white;
 `
 
 export const LogoHumanBodyContainer = styled.div`
