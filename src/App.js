@@ -75,7 +75,6 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" component={Header} />
           <Route exact path="/lobby" component={Header} />
-          <Route exact path="/board/:boardId" component={BoardHeader} />
         </Switch>
           <Switch>
             <Route exact path="/" render={(props) => <SignInSignUpWithSpinner isLoading={loading} {...props} />} />

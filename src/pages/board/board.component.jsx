@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
 import { createStructuredSelector } from 'reselect'
 
-import randomImage from '../../assets/images/random-profile-image.png'
+import Player from '../../components/player/player.component'
+import BoardHeader from '../../components/board-header/board-header.component'
 
 import {
   BoardContainer, Table, PlayerContainer,
@@ -69,14 +70,10 @@ class Board extends React.Component {
   render() {
     return(
       <BoardContainer>
+        <BoardHeader />
         <Table>
           {this.state.players.map(player => (
-            <PlayerContainer key={player.id}>
-              <UserProfileImage src={randomImage} alt="user profil" />
-              <UserPoints>
-                <span>{player.points}</span>
-              </UserPoints>
-            </PlayerContainer>  
+            <Player player={player} />
           ))}
           <CardsContainer>
             <BlackCardsContainer>
