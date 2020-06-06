@@ -29,7 +29,8 @@ class LobbyBoard extends React.Component {
         })
         firestore.doc(`users/${userId}`).update({
           gameSession: boardId,
-          status: 'inGame'
+          status: 'inGame',
+          cards: []
         })
       } else {
         console.log('Ide jelszó kell, hogy belépj')

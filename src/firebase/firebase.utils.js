@@ -21,7 +21,6 @@ export const getLiveBoards = async () => {
 
 export const uploadCards = () => {
   const { name, white, black } = cards2
-  console.log(white)
   const ref = firestore.collection('packs').add({
     white,
     black,
@@ -98,9 +97,31 @@ export const createLiveGame = (boardData, cardPacks, additionalData) => {
         })
         firestore.collection('users').doc(additionalData.creator).update({
           status: 'inGame',
-          gameSession: docRef.id
+          gameSession: docRef.id,
+          cards: []
         })
       })
+  })
+}
+
+export const addFullHandToEveryone = (boardId) => {
+  firestore.collection('boards').doc(boardId).collection('players').get().then(playersSnapshot => {
+    firestore.collection('boards').doc(boardId).get().then(boardSnapshot => {
+      const { whiteCards } = boardSnapshot.data()
+      playersSnapshot.forEach(player => {
+        const { cards } = player.data()
+        for (var i = cards.length; i < 10; i++) {
+          cards.push(whiteCards.shift())
+        }
+        // FELÜL KELL ÍRNI A USERS CARDS-OT ÉS A BOARDS WHITECARDOT
+        firestore.collection('boards').doc(boardId).collection('players').doc(player.id).update({
+          cards: cards
+        })
+        firestore.collection('boards').doc(boardId).update({
+          whiteCards: whiteCards
+        })
+      })
+    })
   })
 }
 
@@ -122,7 +143,6 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 
   const snapShot = await userRef.get()
   if (!snapShot.exists) {
-    console.log('Nem létezetem')
     const {email, username} = userAuth
     const createdAt = new Date()
 
