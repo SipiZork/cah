@@ -76,6 +76,12 @@ export const UserPoints = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 4;
+  opacity: 1;
+  transition: all .25s ease-in-out;
+
+  &.hover {
+    opacity: 0;
+  }
 `
 
 export const UserDetails = styled.div`

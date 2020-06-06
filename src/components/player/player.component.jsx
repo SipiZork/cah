@@ -30,7 +30,7 @@ class Player extends React.Component {
           <UserDetail>{username}</UserDetail>
           <UserDetail>pontok: {points}</UserDetail>
         </UserDetails>
-        <UserPoints>
+        <UserPoints className={this.state.class}>
           <span>{points}</span>
         </UserPoints>
       </PlayerContainer>
