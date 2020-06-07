@@ -125,6 +125,12 @@ export const addFullHandToEveryone = (boardId) => {
   })
 }
 
+export const updateBoardData = (boardId, update) => {
+  firestore.collection('boards').doc(boardId).update({
+    ...update
+  })
+}
+
 export const setUserStatus = (userId, status) => {
   const userRef = firestore.collection('users').doc(userId)
     userRef.get().then(userSnapshot => {

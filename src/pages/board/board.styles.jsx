@@ -61,3 +61,17 @@ export const HiddenBlackCards = styled.div`
     transform: rotate(-60deg);
   }
 `
+
+export const PlayerCardsContainer = styled.div`
+   position: absolute;
+    width: 1100px;
+    height: 28%;
+    left: 50%;
+    transform: translate(-50%);
+    bottom: 0;
+
+    @media screen and (max-width: 1100px){
+      left: 0;
+      transform: translate(0);
+    }
+`

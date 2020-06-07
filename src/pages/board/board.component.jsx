@@ -1,30 +1,42 @@
 import React from 'react'
-import { firestore, addCardsToGame, addFullHandToEveryone } from '../../firebase/firebase.utils'
+import { firestore, addCardsToGame, addFullHandToEveryone, updateBoardData } from '../../firebase/firebase.utils'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
 import { createStructuredSelector } from 'reselect'
 
 import Player from '../../components/player/player.component'
+import PlayerCard from '../../components/player-card/player-card.component'
 import BoardHeader from '../../components/board-header/board-header.component'
+import BoardAdminMenu from '../../components/board-admin-menu/board-admin-menu.component'
 
 import {
-  BoardContainer, Table, PlayerContainer,
-  UserProfileImage, UserPoints, CardsContainer, BlackCardsContainer, HiddenBlackCards
+  BoardContainer, Table, CardsContainer, BlackCardsContainer, HiddenBlackCards,
+  PlayerCardsContainer
 } from './board.styles'
+import BoardTooltip from '../../components/board-tooltip/board-tooltip.component'
 
 class Board extends React.Component {
   state = {
     players: [],
-    board: ''
+    board: '',
+    menuClass: 'hidden',
+    playerCards: []
   }
 
   componentDidMount() {
     const {boardId} = this.props.match.params
     this.playerListener()
+    this.handListener()
     this.boardListener()
+  }
 
-    addFullHandToEveryone(boardId)
+  handListener = () => {
+    const { boardId } = this.props.match.params
+    const cardsRef = firestore.collection('boards').doc(boardId).collection('players').doc(this.props.currentUser.id)
+    cardsRef.onSnapshot(snapshot => {
+      this.setState({ playerCards: snapshot.data().cards })
+    })
   }
 
   playerListener = () => {
@@ -34,7 +46,7 @@ class Board extends React.Component {
         let loadedPlayers = []
         querySnapshot.forEach(player => {
           const username = firestore.collection('users').doc(player.id).get().then(user => {
-            loadedPlayers.push({...player.data(), id: player.id, username: user.data().username })
+            loadedPlayers.push({id: player.id, username: user.data().username, points: player.data().points })
             this.setState({ players: loadedPlayers })
           })
         })
@@ -51,7 +63,7 @@ class Board extends React.Component {
   }
 
   revealBlackCard = () => {
-    const  {boardId } = this.props.match.params
+    const {boardId} = this.props.match.params
     const userId = this.props.currentUser.id
     const { actualPlayer, needCard } = this.state.board
     if (userId === actualPlayer && needCard) {
@@ -67,23 +79,77 @@ class Board extends React.Component {
     }
   }
 
+  toggleMenu = () => {
+    const {boardId} = this.props.match.params
+    const userId = this.props.currentUser.id
+    firestore.collection('boards').doc(boardId).get().then(snapshot => {
+      if (snapshot.data().creator === userId) {
+        if (this.state.menuClass === 'visible') {
+          this.setState({ menuClass: 'hidden' })
+        } else {
+          this.setState({ menuClass: 'visible' })
+        }
+      }
+    })
+  }
+
+  isCreator = () => {
+    const {boardId} = this.props.match.params
+    const userId = this.props.currentUser.id
+    firestore.collection('boards').doc(boardId).get().then(snapshot => {
+      if (snapshot.data().creator === userId) {
+        return true
+      }
+    })
+    return false
+  }
+
+  isActualPlayer = () => {
+    return this.props.currentUser.id === this.state.board.actualPlayer
+  }
+
+  isNeedBlackCard = () => {
+    return this.state.board.needCard === true
+  }
+
+  startGame = () => {
+    const { boardId } = this.props.match.params
+    firestore.collection('boards').doc(boardId).get().then(snapshot => {
+      if (this.props.currentUser.id === snapshot.data().creator) {
+        addFullHandToEveryone(boardId)
+        updateBoardData(boardId, { status: 'started', actualPlayer: snapshot.data().creator })
+      }
+    })
+  }
+
   render() {
-    return(
-      <BoardContainer>
-        <BoardHeader />
-        <Table>
-          {this.state.players.map(player => (
-            <Player player={player} />
-          ))}
-          <CardsContainer>
-            <BlackCardsContainer>
-              <HiddenBlackCards onClick={this.revealBlackCard}>
-                <p>Cards Against Humanity</p>
-              </HiddenBlackCards>
-            </BlackCardsContainer>
-          </CardsContainer>
-        </Table>
-      </BoardContainer>
+    return (
+      <React.Fragment>
+        <BoardHeader toggleMenu={this.toggleMenu} />
+        <BoardAdminMenu class={this.state.menuClass} startGame={this.startGame} />
+        <BoardContainer>
+          <Table>
+            {this.state.players.map(player => (
+              <Player player={player} key={player.id} />
+            ))}
+            <CardsContainer>
+              <BlackCardsContainer>
+                {this.isActualPlayer() && this.isNeedBlackCard() ? (
+                  <BoardTooltip>Kattins Ide egy fekete kártya felfordításához</BoardTooltip>
+                ) : ''}
+                <HiddenBlackCards onClick={this.revealBlackCard}>
+                  <p>Cards Against Humanity</p>
+                </HiddenBlackCards>
+              </BlackCardsContainer>
+            </CardsContainer>
+            </Table>
+            </BoardContainer>
+            <PlayerCardsContainer className="szia">
+              {this.state.playerCards.map(card => (
+                <PlayerCard>{card}</PlayerCard>
+              ))}
+            </PlayerCardsContainer>
+      </React.Fragment>
     )}
 }
 

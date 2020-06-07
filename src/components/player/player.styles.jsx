@@ -1,12 +1,14 @@
 import styled from 'styled-components'
 
+import * as basic from '../../css/variables'
+
 export const PlayerContainer = styled.div`
   position: absolute;
   bottom: -80px;
   width: 62px;
   height: 62px;
   cursor: pointer;
-  transition: all .25s cubic-bezier(.56,.01,.49,1.53);
+  transition: all .25s ${basic.mainBezier};
   border-radius: 50%;
 
   &.hover {
