@@ -23,7 +23,6 @@ export const Card = styled.div`
   z-index: 1;
   transition: all .2s ease-in-out;
   user-select: none;
-  word-break: normal;
 
   &.selected {
     box-shadow: -5px 5px 50px green;
