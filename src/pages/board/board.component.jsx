@@ -105,8 +105,8 @@ class Board extends React.Component {
     const {boardId} = this.props.match.params
     const boardsRef = firestore.collection('boards').doc(boardId)
     this.unsunscribeFromBord = boardsRef.onSnapshot(querySnapshot => {
-      const { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed } = querySnapshot.data()
-      this.setState({ board: { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed } })
+      const { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed, randomOrder } = querySnapshot.data()
+      this.setState({ board: { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed, randomOrder } })
     })
   }
 
@@ -157,6 +157,13 @@ class Board extends React.Component {
     })
   }
 
+  generateRandomPlayerORder = () => {
+    const { boardId } = this.props.match.params
+    const order = this.state.players.map(player => player.id)
+    order.sort(() => Math.random() - 0.5)
+    updateBoardData(boardId, { randomOrder: order })
+  }
+
   newRound = () => {
     const { boardId } = this.props.match.params
     firestore.collection('boards').doc(boardId).get().then(snapshot => {
@@ -168,6 +175,7 @@ class Board extends React.Component {
         removeAllSelectedCards(boardId)
         resetBoardDatas(boardId)
         revealBlackCard(boardId, playersWOCzar)
+        this.generateRandomPlayerORder()
       })
     })
   }
@@ -304,7 +312,7 @@ class Board extends React.Component {
             )})}
             <CardsContainer>
               <BlackCardsContainer>
-                <HiddenBlackCards onClick={this.newRound}>
+                <HiddenBlackCards onClick={this.generateRandomPlayerORder}>
                   <p>Cards Against Humanity</p>
                 </HiddenBlackCards>
                 {this.state.board.actualBlackCard &&
@@ -314,16 +322,21 @@ class Board extends React.Component {
                 }
               </BlackCardsContainer>
               <WhiteCardsContainer>
-                {this.state.players.map(player => (
-                  player.id !== this.state.board.actualPlayer && player.playedCards.length > 0 && <PlayerPlayedCards
-                    key={player.id}
-                    cards={player.playedCards}
-                    playerId={player.id}
-                    revealAndUpdateAndConfirmWinner={this.revealAndUpdateAndConfirmWinner}
-                    deleteSelectedWinner={this.deleteSelectedWinner}
-                    winner={this.state.winner}
-                  />
-                ))}
+                {this.state.board.randomOrder && this.state.board.randomOrder.map(playerId => {
+                  const player = this.state.players.find(actPlayer => actPlayer.id === playerId)
+                  if (player !== undefined) {
+                    return (
+                      player.id !== this.state.board.actualPlayer && player.playedCards.length > 0 && <PlayerPlayedCards
+                        key={player.id}
+                        cards={player.playedCards}
+                        playerId={player.id}
+                        revealAndUpdateAndConfirmWinner={this.revealAndUpdateAndConfirmWinner}
+                        deleteSelectedWinner={this.deleteSelectedWinner}
+                        winner={this.state.winner}
+                      />
+                    )
+                  }
+                })}
               </WhiteCardsContainer>
             </CardsContainer>
             </Table>

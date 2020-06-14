@@ -26,6 +26,7 @@ export const Card = styled.div`
   box-shadow: -5px 5px 40px black;
   border: 1px solid black;
   overflow: scroll;
+  
   &::-webkit-scrollbar {
     display: none;
   }
