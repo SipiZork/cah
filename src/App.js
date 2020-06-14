@@ -3,7 +3,7 @@ import { withRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 
-import { auth, createUserProfileDocument, setUserStatus } from './firebase/firebase.utils'
+import { auth, createUserProfileDocument } from './firebase/firebase.utils'
 import { setCurrentUser } from './redux/user/user.actions'
 import { selectCurrentUser } from './redux/user/user.selectors'
 
@@ -12,7 +12,6 @@ import Header from './components/header/header.components'
 import SignInSignUp from './components/sign-in-sign-up/sign-in-sign-up.components'
 import CreateRoomAndLobby from './components/create-room-and-lobby/create-room-and-lobby.component';
 import Board from './pages/board/board.component'
-import BoardHeader from './components/board-header/board-header.component'
 
 import './App.css';
 
@@ -27,7 +26,7 @@ class App extends React.Component {
   unsubsribeFromAuth = null
 
   componentDidMount() {
-    const { setCurrentUser, history, location, currentUser } = this.props
+    const { setCurrentUser, history} = this.props
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth)

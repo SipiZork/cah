@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
-import { firestore, uploadCards, addCardsToGame, setUserStatus } from '../../firebase/firebase.utils'
+import { firestore, setUserStatus } from '../../firebase/firebase.utils'
 
 import LobbyBoard from '../lobby-board/lobby-board.component'
 import { LobbyContainer } from './lobby.styles'
@@ -12,6 +12,9 @@ class Lobby extends React.Component {
     liveBoards: [],
     userCount: 0,
   }
+
+  unsubscrubeFromBoards = null
+
   componentDidMount() {    
     /*let loadedBoards = []
     firestore
@@ -34,7 +37,7 @@ class Lobby extends React.Component {
 
   boardsListener = () => {
     const boardsRef = firestore.collection('boards')
-    boardsRef
+    this.unsubscrubeFromBoards = boardsRef
       .where('live', '==', true)
       .orderBy('createdAt', 'desc')
       .onSnapshot(querySnapshot => {
@@ -46,6 +49,7 @@ class Lobby extends React.Component {
                 if (board.id === doc.id && board.playersNum !== snapShot.size) {
                   board.playersNum = snapShot.size
                 }
+                return null
               })
               return {
                 boards
@@ -58,6 +62,10 @@ class Lobby extends React.Component {
           })
         })
       })      
+  }
+
+  componentWillUnmount() {
+    this.unsubscrubeFromBoards()
   }
 
   /*reloadBoards = () => {
@@ -76,7 +84,6 @@ class Lobby extends React.Component {
   } */
 
   displayBoards = boards => {
-    let counter = 0;
     return (boards.length > 0 &&
       boards.map(board => {
         return <LobbyBoard key={board.id} boardData={board} currentUser={this.props.currentUser} />

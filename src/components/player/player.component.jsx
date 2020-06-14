@@ -18,13 +18,15 @@ class Player extends React.Component {
   }
   render() {
     const { id, points, username } = this.props.player
+    const { czar } = this.props
     return (
       <PlayerContainer
         key={id}
-        className={this.state.class}
+        className={`${this.state.class} ${czar && 'czar'}`}
         onMouseEnter={this.toggleClass}
         onMouseLeave={this.toggleClass}
       >
+        <p className={'word'}>{username[0]}{username[1]}<span>{czar ? '✧' : ''}</span></p>
         <UserProfileImage src={randomImage} alt="user profil" />
         <UserDetails className={this.state.class}>
           <UserDetail>{username}</UserDetail>

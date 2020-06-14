@@ -11,6 +11,45 @@ export const PlayerContainer = styled.div`
   transition: all .25s ${basic.mainBezier};
   border-radius: 50%;
 
+  &.czar {
+    box-shadow: 5px 5px 5px gold,
+                -5px -5px 5px gold;
+    animation: czar-animation 3s linear infinite;
+
+    p {
+      color: gold;
+
+      span {
+        font-size: 1.4rem;
+        position: relative;
+        top: -15px;
+      }
+    }
+  }
+
+  @keyframes czar-animation {
+    0% {
+      box-shadow: 5px 5px 5px gold,
+                  -5px -5px 5px gold;
+    }
+    25% {
+      box-shadow: 5px -5px 5px gold,
+                  -5px 5px 5px gold;
+    }
+    50% {
+      box-shadow: -5px -5px 5px gold,
+                  5px 5px 5px gold;
+    }
+    75% {
+      box-shadow: -5px 5px 5px gold,
+                  5px -5px 5px gold;
+    }
+    100% {
+      box-shadow: 5px 5px 5px gold,
+                  -5px -5px 5px gold;
+    }
+  }
+
   &.hover {
     width: 200px;
     height: 60px;
@@ -25,30 +64,39 @@ export const PlayerContainer = styled.div`
     }
   }
 
+  .word {
+    position: absolute;
+    line-height: 55px;
+    left: 5px;
+    z-index: 5;
+    color: white;
+    font-size: 2rem;
+  }
+
   &:nth-child(1) {
     top: 500px;
     left: 47%;
   }
 
-
   &:nth-child(2) {
-    top: -80px;
-    left: 47%;
-  }
-
-  &:nth-child(3) {
     top: 500px;
     left:10%;
   }
 
+  &:nth-child(3) {
+    top: -80px;
+    left: 10%;
+  }
+
   &:nth-child(4) {
     top: -80px;
-    right: 10%;
+    left: 47%;
   }
+
 
   &:nth-child(5) {
     top: -80px;
-    left: 10%;
+    right: 10%;
   }
 
   &:nth-child(6) {
@@ -63,6 +111,7 @@ export const UserProfileImage = styled.img`
   border-radius: 50%;
   position: relative;
   z-index: 2;
+  opacity: .4;
 `
 
 export const UserPoints = styled.div`
@@ -90,8 +139,8 @@ export const UserDetails = styled.div`
   width: calc(100% + 2px);
   height: calc(100% + 2px);
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -1px;
+  left: -1px;
   border: 1px solid white;
   background: rgba(20, 20, 20, 1);
   color: white;

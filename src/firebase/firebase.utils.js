@@ -21,7 +21,7 @@ export const getLiveBoards = async () => {
 
 export const uploadCards = () => {
   const { name, white, black } = cards2
-  const ref = firestore.collection('packs').add({
+  firestore.collection('packs').add({
     white,
     black,
     name
@@ -67,7 +67,7 @@ const shuffle = (array) => {
 export const createLiveGame = (boardData, cardPacks, additionalData) => {
   if (!boardData) return
   const createdAt = new Date()
-  const { boardName, password, goalPoint, creatorUsername } = boardData
+  const { boardName, password, goalPoint} = boardData
   let packs = cardPacks.replace(/\s*,\s*/g, ",");
   packs = packs.split(',')
   let cardPacksForDatabase = {}
@@ -77,6 +77,7 @@ export const createLiveGame = (boardData, cardPacks, additionalData) => {
         if (packs.includes(doc.data().name)) {
          cardPacksForDatabase[doc.id] = true
         }
+        return null
       })
     }
   }).then(() => {
@@ -88,30 +89,47 @@ export const createLiveGame = (boardData, cardPacks, additionalData) => {
       cardPacks: cardPacksForDatabase,
       backCards: null,
       whiteCards: null,
+      playedWhiteCards: 0,
+      revealedWhiteCards: 0,
+      winner: '',
+      whiteCardsNeed: 0,
       ...additionalData
     })
       .then((docRef) => {
         firestore.collection('boards').doc(docRef.id).collection('players').doc(additionalData.creator).set({
           inGame: true,
-          points: 0
+          points: 0,
+          numberInRow: 1,
+          selectedCards: [],
+          cards: []
         })
         firestore.collection('users').doc(additionalData.creator).update({
           status: 'inGame',
-          gameSession: docRef.id,
-          cards: []
+          gameSession: docRef.id
         })
+        addCardsToGame(docRef.id)
       })
   })
 }
 
+export const resetBoardDatas = (boardId) => {
+  const boardRef = firestore.collection('boards').doc(boardId)
+  boardRef.update({
+    playedWhiteCards: 0,
+    revealedWhiteCards: 0,
+    status: 'inTurn'
+  })
+}
+
 export const addFullHandToEveryone = (boardId) => {
-  firestore.collection('boards').doc(boardId).collection('players').get().then(playersSnapshot => {
+  firestore.collection('boards').doc(boardId).collection('players').where('inGame', '==', true).get().then(playersSnapshot => {
     firestore.collection('boards').doc(boardId).get().then(boardSnapshot => {
       const { whiteCards } = boardSnapshot.data()
       playersSnapshot.forEach(player => {
         const { cards } = player.data()
         for (var i = cards.length; i < 10; i++) {
-          cards.push(whiteCards.shift())
+          const actCard = {text: whiteCards.shift(), revealed: false}
+          cards.push(actCard)
         }
         // FELÜL KELL ÍRNI A USERS CARDS-OT ÉS A BOARDS WHITECARDOT
         firestore.collection('boards').doc(boardId).collection('players').doc(player.id).update({
@@ -122,6 +140,63 @@ export const addFullHandToEveryone = (boardId) => {
         })
       })
     })
+  })
+}
+
+export const revealBlackCard = (boardId, playersNum) => {
+  const boardRef = firestore.collection('boards').doc(boardId)
+  boardRef.get().then(snapshot => {
+    const { blackCards } = snapshot.data()
+    const revealBlackCard = blackCards.shift()
+    console.log(revealBlackCard)
+    boardRef.update({
+      blackCards: blackCards,
+      whiteCardsNeed: revealBlackCard.cards * playersNum,
+      actualBlackCard: revealBlackCard
+    })
+  })
+}
+
+export const removeAllSelectedCards = (boardId) => {
+  const playersRef = firestore.collection('boards').doc(boardId).collection('players')
+  playersRef.get().then(players => {
+    players.forEach(player => {
+      const playerRef = firestore.collection('boards').doc(boardId).collection('players').doc(player.id)
+      playerRef.update({
+        selectedCards: []
+      })
+    })
+  })
+}
+
+export const selectNextPlayer = (boardId, actualPlayer) => {
+  const actualPlayerRef = firestore.collection('boards').doc(boardId).collection('players').doc(actualPlayer)
+  const boardRef = firestore.collection('boards').doc(boardId)
+  return actualPlayerRef.get().then( async player => {
+    const playerInRow = player.data().numberInRow
+    const nextPlayerRef = firestore.collection('boards').doc(boardId).collection('players').where('numberInRow', '==', playerInRow + 1)
+    const nextPlayerSnapshot = await nextPlayerRef.get()
+    console.log(nextPlayerSnapshot)
+    if (!nextPlayerSnapshot.empty) {
+      nextPlayerRef.get().then(players => {
+        players.forEach(player => {
+          console.log(player.data().numberInRow)
+          boardRef.update({
+            actualPlayer: player.id
+          })
+        })
+      })
+    } else {
+      const firstPlayerInRow = firestore.collection('boards').doc(boardId).collection('players').orderBy('numberInRow', 'asc').limit(1)
+      firstPlayerInRow.get().then(players => {
+        players.forEach(player => {
+          console.log(player.data().numberInRow)
+          boardRef.update({
+            actualPlayer: player.id
+          })
+        })
+      })
+    }
   })
 }
 

@@ -4,7 +4,7 @@ export const BoardContainer = styled.div`
   width: 100vw;
   max-width: 100%;
   min-height: 100vh;
-  min-width: 1100px;
+  min-width: 1280px;
   background-color: rgb(49, 49, 49);
   display: flex;
   justify-content: center;
@@ -13,7 +13,7 @@ export const BoardContainer = styled.div`
 
 export const Table = styled.div`
   position: relative;
-  min-width: 880px;
+  min-width: 1060px;
   margin-top: 100px;
   width: 80vw;
   height: 50vh;
@@ -38,6 +38,7 @@ export const BlackCardsContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
+  order: 1px solid red;
 `
 
 export const HiddenBlackCards = styled.div`
@@ -64,14 +65,42 @@ export const HiddenBlackCards = styled.div`
 
 export const PlayerCardsContainer = styled.div`
    position: absolute;
-    width: 1100px;
+    width: 1280px; 
+    border: 1px solid red;
     height: 28%;
     left: 50%;
     transform: translate(-50%);
     bottom: 0;
 
-    @media screen and (max-width: 1100px){
+    @media screen and (max-width: 1280px){
       left: 0;
       transform: translate(0);
     }
+`
+
+export const RevealedBlackCard = styled.div`
+  width: 160px;
+  height: 250px;
+  border: 1px solid white;
+  background-color: black;
+  color: white;
+  padding: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.3);
+    z-index: 5;
+  }
+`
+
+export const WhiteCardsContainer = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  border: 1px solid red;
 `

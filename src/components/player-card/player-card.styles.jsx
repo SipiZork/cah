@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const getCardPositions = () => {
   let nth = ''
   for (let i = 2; i <= 10; i++) {
-    nth += `&:nth-child(${i}) {left: ${105 * (i - 1)}px; z-index: ${i} };`
+    nth += `&:nth-child(${i}) {left: ${124 * (i - 1)}px; z-index: ${i} };`
   }
   return nth
 }
@@ -22,6 +22,13 @@ export const Card = styled.div`
   box-shadow: -5px 5px 50px black;
   z-index: 1;
   transition: all .2s ease-in-out;
+  user-select: none;
+  word-break: break-all;
+
+  &.selected {
+    box-shadow: -5px 5px 50px green;
+    border: 1px solid green;
+  }
 
  ${getCardPositions}
 
