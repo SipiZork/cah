@@ -93,7 +93,7 @@ export const createLiveGame = (boardData, cardPacks, additionalData) => {
       revealedWhiteCards: 0,
       winner: '',
       whiteCardsNeed: 0,
-      randomOrdeR: [],
+      randomOrder: [],
       ...additionalData
     })
       .then((docRef) => {

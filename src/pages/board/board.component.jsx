@@ -159,9 +159,11 @@ class Board extends React.Component {
 
   generateRandomPlayerORder = () => {
     const { boardId } = this.props.match.params
-    const order = this.state.players.map(player => player.id)
-    order.sort(() => Math.random() - 0.5)
-    updateBoardData(boardId, { randomOrder: order })
+    firestore.collection('boards').doc(boardId).collection('players').get().then(querySnapshot => {
+      const players = querySnapshot.docs.map(player => player.id)
+      players.sort(() => Math.random() - 0.5)
+      updateBoardData(boardId, { randomOrder: players })
+    })
   }
 
   newRound = () => {
@@ -278,7 +280,7 @@ class Board extends React.Component {
         if (this.state.winner === playerId) {
           const winnerRef = firestore.collection('boards').doc(boardId).collection('players').doc(playerId)
           winnerRef.get().then(snapshot => {
-            if (snapshot.data().points >= this.state.board.goalPoint) {
+            if (snapshot.data().points + 1 >= this.state.board.goalPoint) {
               updateBoardData(boardId, { status: 'finished', winner: snapshot.id })
             } else {
               this.newRound()
