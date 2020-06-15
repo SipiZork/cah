@@ -150,6 +150,7 @@ class Board extends React.Component {
         if (this.props.currentUser.id === snapshot.data().creator) {
           const playersWOCzar = playersSnapshot.docs.length - 1
           addFullHandToEveryone(boardId)
+          this.generateRandomPlayerORder()
           updateBoardData(boardId, { status: 'inTurn', actualPlayer: snapshot.data().creator })
           revealBlackCard(boardId, playersWOCzar)
         }
