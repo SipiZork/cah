@@ -83,20 +83,27 @@ class Board extends React.Component {
     })
   }
 
-  playerListener = async () => {
+  playerListener = () => {
     const {boardId} = this.props.match.params
+    const boardsRef = firestore.collection('boards').doc(boardId)
     const playersRef = firestore
       .collection('boards')
       .doc(boardId)
       .collection('players')
       .orderBy('numberInRow', 'asc')
-    this.unsunscribeFromPlayer = await playersRef.onSnapshot(querySnapshot => {
+    this.unsunscribeFromPlayer = playersRef.onSnapshot(async querySnapshot => {
       let loadedPlayers = []
+      let playedCards = 0
       querySnapshot.forEach(player => {
+        playedCards += player.data().selectedCards.length
         firestore.collection('users').doc(player.id).get().then(user => {
-          loadedPlayers.push({id: player.id, username: user.data().username, points: player.data().points, playedCards: player.data().selectedCards })
+          console.log(user.data())
+          loadedPlayers.push({ id: player.id, username: user.data().username, points: player.data().points, playedCards: player.data().selectedCards })
           this.setState({ players: loadedPlayers })
         })
+      })
+      await boardsRef.update({
+        playedWhiteCards: playedCards
       })
     })
   }
@@ -104,9 +111,10 @@ class Board extends React.Component {
   boardListener = () => {
     const {boardId} = this.props.match.params
     const boardsRef = firestore.collection('boards').doc(boardId)
-    this.unsunscribeFromBord = boardsRef.onSnapshot(querySnapshot => {
-      const { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed, randomOrder } = querySnapshot.data()
-      this.setState({ board: { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed, randomOrder } })
+    this.unsunscribeFromBord = boardsRef.onSnapshot(async querySnapshot => {
+      console.log('Változás')
+      const { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed, randomOrder, winner } = querySnapshot.data()
+      this.setState({ board: { actualPlayer, actualBlackCard, status, playedWhiteCards, revealedWhiteCards, goalPoint, whiteCardsNeed, randomOrder, winner } })
     })
   }
 
@@ -205,11 +213,6 @@ class Board extends React.Component {
               cards,
               selectedCards
             })
-            boardRef.get().then(boardSnapshot => {
-              boardRef.update({
-                playedWhiteCards: boardSnapshot.data().playedWhiteCards + 1
-              })
-            })
           }
         })
       } else {
@@ -279,12 +282,31 @@ class Board extends React.Component {
       const { boardId } = this.props.match.params
       if (this.state.board.whiteCardsNeed === this.state.board.playedWhiteCards && this.state.board.status === 'pickWinner') {
         if (this.state.winner === playerId) {
+          const boardRef = firestore.collection('boards').doc(boardId)
+          const playersRef = firestore.collection('boards').doc(boardId).collection('players')
           const winnerRef = firestore.collection('boards').doc(boardId).collection('players').doc(playerId)
           winnerRef.get().then(snapshot => {
             if (snapshot.data().points + 1 >= this.state.board.goalPoint) {
               updateBoardData(boardId, { status: 'finished', winner: snapshot.id })
+              setTimeout(() => {
+                playersRef.get().then(querySnapshot => {
+                  querySnapshot.forEach(player => {
+                    firestore.collection('users').doc(player.id).update({
+                      gameSession: '',
+                      status: 'inLobby'
+                    })
+                    playersRef.doc(player.id).update({
+                      inGame: false
+                    })
+                    updateBoardData(boardId, { live: false })
+                  })
+                })
+              }, 3000);
             } else {
-              this.newRound()
+              updateBoardData(boardId, { status: 'waitingForNextRound', winner: snapshot.id })
+              setTimeout(() => {
+                this.newRound()
+              }, 4000);
             }
             winnerRef.update({
               points: snapshot.data().points + 1
@@ -315,7 +337,7 @@ class Board extends React.Component {
             )})}
             <CardsContainer>
               <BlackCardsContainer>
-                <HiddenBlackCards onClick={this.generateRandomPlayerORder}>
+                <HiddenBlackCards onClick={this.newRound}>
                   <p>Cards Against Humanity</p>
                 </HiddenBlackCards>
                 {this.state.board.actualBlackCard &&
@@ -333,6 +355,7 @@ class Board extends React.Component {
                         key={player.id}
                         cards={player.playedCards}
                         playerId={player.id}
+                        highlight={this.state.board.status === 'waitingForNextRound' && this.state.board.winner === player.id}
                         revealAndUpdateAndConfirmWinner={this.revealAndUpdateAndConfirmWinner}
                         deleteSelectedWinner={this.deleteSelectedWinner}
                         winner={this.state.winner}

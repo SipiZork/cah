@@ -66,7 +66,6 @@ export const HiddenBlackCards = styled.div`
 export const PlayerCardsContainer = styled.div`
    position: absolute;
     width: 1280px; 
-    border: 1px solid red;
     height: 28%;
     left: 50%;
     transform: translate(-50%);
@@ -102,5 +101,4 @@ export const WhiteCardsContainer = styled.div`
   justify-content: space-around;
   align-items: flex-start;
   flex-wrap: wrap;
-  border: 1px solid red;
 `

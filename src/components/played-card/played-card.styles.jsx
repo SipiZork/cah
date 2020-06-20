@@ -41,6 +41,11 @@ export const Card = styled.div`
     border: 1px solid green;
   }
 
+  &.winner {
+    transform: scale(1.3);
+    background-color: rgba(56, 249, 46, 1);
+  }
+
   span {
     text-align: center;
     position: absolute;
