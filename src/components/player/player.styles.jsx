@@ -103,6 +103,39 @@ export const PlayerContainer = styled.div`
     top: 500px;
     right: 10%;
   }
+
+  &.short {
+
+    &:nth-child(1) {
+      top: -80px;
+      left: 5%;
+    }
+
+    &:nth-child(2) {
+      top: -80px;
+      left: 20%;
+    }
+
+    &:nth-child(3) {
+      top: -80px;
+      left: 35%;
+    }
+
+    &:nth-child(4) {
+      top: -80px;
+      left: 50%;
+    }
+
+    &:nth-child(5) {
+      top: -80px;
+      left: 65%;
+    }
+
+    &:nth-child(6) {
+      top: -80px;
+      left: 80%;
+    }
+  }
 `
 
 export const UserProfileImage = styled.img`

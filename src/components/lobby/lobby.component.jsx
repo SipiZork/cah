@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
 import { selectCurrentUser } from '../../redux/user/user.selectors'
-import { firestore, setUserStatus } from '../../firebase/firebase.utils'
+import { firestore, setUserStatus, uploadCards } from '../../firebase/firebase.utils'
 
 import LobbyBoard from '../lobby-board/lobby-board.component'
 import { LobbyContainer } from './lobby.styles'
@@ -27,7 +27,6 @@ class Lobby extends React.Component {
         this.setState({ liveBoards: loadedBoards })
       })
     }) */
-
     this.boardsListener()
     // uploadCards()
     console.log(this.props.currentUser.id)

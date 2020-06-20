@@ -49,8 +49,12 @@ class App extends React.Component {
     const { currentUser, history } = this.props
     if (prevProps.currentUser !== currentUser && currentUser !== null) {
       if (currentUser.status === 'inGame') {
-        history.push(`/board/${currentUser.gameSession}`)
-        this.setState({ loading: false })
+        this.setState({ loading: true }, () => {
+          setTimeout(() => {
+            history.push(`/board/${currentUser.gameSession}`)
+            this.setState({ loading: false })
+          }, 2500);
+        })
       } else {
         history.push('/lobby')
         this.setState({ loading: false })

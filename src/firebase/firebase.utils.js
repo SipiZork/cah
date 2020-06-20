@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/database'
 import 'firebase/auth'
-import { cards2 } from '../cards'
+import { cards } from '../cards'
 
 const config = {
   apiKey: "AIzaSyCcgPbAEwgwn9IaxmdtsM8ZpY1AXijPZLA",
@@ -20,7 +20,7 @@ export const getLiveBoards = async () => {
 }
 
 export const uploadCards = () => {
-  const { name, white, black } = cards2
+  const { name, white, black } = cards
   firestore.collection('packs').add({
     white,
     black,

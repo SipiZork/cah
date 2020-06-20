@@ -18,11 +18,11 @@ class Player extends React.Component {
   }
   render() {
     const { id, points, username } = this.props.player
-    const { czar } = this.props
+    const { czar, short } = this.props
     return (
       <PlayerContainer
         key={id}
-        className={`${this.state.class} ${czar && 'czar'}`}
+        className={`${this.state.class} ${czar && 'czar'} ${short && 'short'}`}
         onMouseEnter={this.toggleClass}
         onMouseLeave={this.toggleClass}
       >

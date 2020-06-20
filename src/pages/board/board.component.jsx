@@ -27,7 +27,8 @@ class Board extends React.Component {
     playerCards: [],
     selectedWhiteCard: '',
     randomPlayerOrder: [],
-    winner: ''
+    winner: '',
+    short: false
   }
 
   unsunscribeFromBord = null
@@ -50,6 +51,8 @@ class Board extends React.Component {
       inGame: false
       })
     })
+    this.checkShort()
+    window.addEventListener('resize', this.checkShort)
   }
 
   componentWillUnmount() {
@@ -70,7 +73,8 @@ class Board extends React.Component {
       if (this.state.board.revealedWhiteCards === this.state.board.whiteCardsNeed &&
         this.state.board.whiteCardsNeed !== 0 && this.state.board.revealedWhiteCards !== 0) {
         const { boardId } = this.props.match.params
-        updateBoardData(boardId, {status: 'pickWinner'})
+        this.generateRandomPlayerORder()
+        updateBoardData(boardId, { status: 'pickWinner' })
       }
     }
   }
@@ -322,6 +326,14 @@ class Board extends React.Component {
     }
   }
 
+  checkShort = () => {
+    if (window.innerHeight < 851 && this.state.short === false) {
+      this.setState({ short: true })
+    } else if (window.innerHeight > 850 && this.state.short === true) {
+      this.setState({ short: false })
+    }
+  }
+
   render() {
     const { boardId } = this.props.match.params
     return (
@@ -335,8 +347,8 @@ class Board extends React.Component {
           <Table>
             {this.state.players.map(player => {
               const czar = player.id === this.state.board.actualPlayer
-              return(  <Player player ={player} key={player.id} czar={czar} />
-            )})}
+              return (<Player player={player} key={player.id} czar={czar} short={this.state.short} />)
+            })}
             <CardsContainer>
               <BlackCardsContainer>
                 <HiddenBlackCards>
