@@ -282,36 +282,38 @@ class Board extends React.Component {
       const { boardId } = this.props.match.params
       if (this.state.board.whiteCardsNeed === this.state.board.playedWhiteCards && this.state.board.status === 'pickWinner') {
         if (this.state.winner === playerId) {
-          const boardRef = firestore.collection('boards').doc(boardId)
-          const playersRef = firestore.collection('boards').doc(boardId).collection('players')
-          const winnerRef = firestore.collection('boards').doc(boardId).collection('players').doc(playerId)
-          winnerRef.get().then(snapshot => {
-            if (snapshot.data().points + 1 >= this.state.board.goalPoint) {
-              updateBoardData(boardId, { status: 'finished', winner: snapshot.id })
-              setTimeout(() => {
-                playersRef.get().then(querySnapshot => {
-                  querySnapshot.forEach(player => {
-                    firestore.collection('users').doc(player.id).update({
-                      gameSession: '',
-                      status: 'inLobby'
+          if (this.state.board.actualPlayer === this.props.currentUser.id) {
+            const boardRef = firestore.collection('boards').doc(boardId)
+            const playersRef = firestore.collection('boards').doc(boardId).collection('players')
+            const winnerRef = firestore.collection('boards').doc(boardId).collection('players').doc(playerId)
+            winnerRef.get().then(snapshot => {
+              if (snapshot.data().points + 1 >= this.state.board.goalPoint) {
+                updateBoardData(boardId, { status: 'finished', winner: snapshot.id })
+                setTimeout(() => {
+                  playersRef.get().then(querySnapshot => {
+                    querySnapshot.forEach(player => {
+                      firestore.collection('users').doc(player.id).update({
+                        gameSession: '',
+                        status: 'inLobby'
+                      })
+                      playersRef.doc(player.id).update({
+                        inGame: false
+                      })
+                      updateBoardData(boardId, { live: false })
                     })
-                    playersRef.doc(player.id).update({
-                      inGame: false
-                    })
-                    updateBoardData(boardId, { live: false })
                   })
-                })
-              }, 3000);
-            } else {
-              updateBoardData(boardId, { status: 'waitingForNextRound', winner: snapshot.id })
-              setTimeout(() => {
-                this.newRound()
-              }, 4000);
-            }
-            winnerRef.update({
-              points: snapshot.data().points + 1
+                }, 3000);
+              } else {
+                updateBoardData(boardId, { status: 'waitingForNextRound', winner: snapshot.id })
+                setTimeout(() => {
+                  this.newRound()
+                }, 4000);
+              }
+              winnerRef.update({
+                points: snapshot.data().points + 1
+              })
             })
-          })
+          }
           this.setState({ winner: '' })
         } else {
           this.setState({ winner: playerId })
