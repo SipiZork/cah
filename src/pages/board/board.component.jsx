@@ -337,7 +337,7 @@ class Board extends React.Component {
             )})}
             <CardsContainer>
               <BlackCardsContainer>
-                <HiddenBlackCards onClick={this.newRound}>
+                <HiddenBlackCards>
                   <p>Cards Against Humanity</p>
                 </HiddenBlackCards>
                 {this.state.board.actualBlackCard &&
