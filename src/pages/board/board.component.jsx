@@ -67,13 +67,13 @@ class Board extends React.Component {
         this.state.board.whiteCardsNeed !== 0 && this.state.board.playedWhiteCards !== 0) {
         const { boardId } = this.props.match.params
         updateBoardData(boardId, {status: 'revealCards'})
+        this.generateRandomPlayerORder()
       }
     }
     if (prevState.board.revealedWhiteCards !== this.state.board.revealedWhiteCards) {
       if (this.state.board.revealedWhiteCards === this.state.board.whiteCardsNeed &&
         this.state.board.whiteCardsNeed !== 0 && this.state.board.revealedWhiteCards !== 0) {
         const { boardId } = this.props.match.params
-        this.generateRandomPlayerORder()
         updateBoardData(boardId, { status: 'pickWinner' })
       }
     }
