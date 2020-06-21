@@ -354,6 +354,20 @@ class Board extends React.Component {
     }, 10);
   }
 
+  newBlackCard = () => {
+    const { boardId } = this.props.match.params
+    firestore.collection('boards').doc(boardId).get().then(snapshot => {
+      firestore.collection('boards').doc(boardId).collection('players').get().then(playersSnapshot => {
+        const playersWOCzar = playersSnapshot.docs.length - 1
+        addFullHandToEveryone(boardId)
+        removeAllSelectedCards(boardId)
+        resetBoardDatas(boardId)
+        revealBlackCard(boardId, playersWOCzar)
+        this.generateRandomPlayerORder()
+      })
+    })
+  }
+
   render() {
     const { boardId } = this.props.match.params
     return (
@@ -363,6 +377,7 @@ class Board extends React.Component {
           menuClass={this.state.menuClass}
           startGame={this.startGame}
           newRound={this.newRound}
+          newBlackCard={this.newBlackCard}
           closeBoard={this.closeBoard}
           boardStatus={this.state.board.status} />
         <BoardContainer>
