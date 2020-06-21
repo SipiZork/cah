@@ -14,6 +14,7 @@ import CreateRoomAndLobby from './components/create-room-and-lobby/create-room-a
 import Board from './pages/board/board.component'
 
 import './App.css';
+import ErrorMessage from './components/error/error.components';
 
 const SignInSignUpWithSpinner = WithSpinner(SignInSignUp)
 const CreateRoomAndLobbyWithSpinner = WithSpinner(CreateRoomAndLobby)
@@ -21,7 +22,9 @@ const BoardWithSpinner = WithSpinner(Board)
 
 class App extends React.Component {
   state = {
-    loading: true
+    loading: true,
+    showError: true,
+    error: ''
   }
   unsubsribeFromAuth = null
 
@@ -70,26 +73,46 @@ class App extends React.Component {
     const { currentUser } = this.state
     console.log(currentUser)
   }
+
+  toggleError = () => {
+    this.setState(state => ({
+      showError: !state.showError
+    }))
+  }
+
+  setError = (title, message) => {
+    const error = {
+      title: title,
+      message: message
+    }
+    this.setState({
+      showError: true,
+      error: error
+    })
+  }
   
   render() {
-    const { loading } = this.state
+    const { loading, error, showError } = this.state
     return (
-      <div className="wrapper">
-        <Switch>
-          <Route exact path="/" component={Header} />
-          <Route exact path="/lobby" component={Header} />
-        </Switch>
+      <React.Fragment>
+        {showError && error && <ErrorMessage error={error} close={this.toggleError} />}
+        <div className="wrapper">
           <Switch>
-            <Route exact path="/" render={(props) => <SignInSignUpWithSpinner isLoading={loading} {...props} />} />
-            <Route exact path="/lobby" render={(props) => <CreateRoomAndLobbyWithSpinner isLoading={loading} {...props} />} />
-            <Route exact path="/board/:boardId" render={(props) => <BoardWithSpinner isLoading={loading} {...props} />} />
+            <Route exact path="/" component={Header} />
+            <Route exact path="/lobby" component={Header} />
           </Switch>
-        <div onClick={() => {
-          auth.signOut()
-          setCurrentUser(null)
-        }}>Kilépés</div>
+            <Switch>
+            <Route exact path="/" render={(props) => <SignInSignUpWithSpinner setError={this.setError} isLoading={loading} {...props} />} />
+            <Route exact path="/lobby" render={(props) => <CreateRoomAndLobbyWithSpinner setError={this.setError} isLoading={loading} {...props} />} />
+              <Route exact path="/board/:boardId" render={(props) => <BoardWithSpinner isLoading={loading} {...props} />} />
+            </Switch>
+          <div onClick={() => {
+            auth.signOut()
+            setCurrentUser(null)
+          }}>Kilépés</div>
 
-      </div>
+        </div>
+      </React.Fragment>
     )
   }
 }

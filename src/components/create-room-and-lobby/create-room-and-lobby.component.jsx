@@ -7,9 +7,10 @@ import { CreateRoomAndLobbyContainer } from './create-room-and-lobby.styles'
 
 class CreateRoomAndLobby extends React.Component{ 
   render() {
+    const {setError} = this.props
     return (
       <CreateRoomAndLobbyContainer>
-        <CreateRoom />
+        <CreateRoom setError={setError}/>
         <Lobby />
       </CreateRoomAndLobbyContainer>
     )

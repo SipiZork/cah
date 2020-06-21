@@ -20,11 +20,12 @@ class SignIn extends React.Component {
     event.preventDefault()
 
     const { email, password } = this.state
+    const { setError } = this.props
     try {
       await auth.signInWithEmailAndPassword(email, password)
       this.setState({ email: '', password: '' })
     } catch (error) {
-      console.log(error)
+      setError('Bejelentkezési hiba', error.message)
     }
   }
 

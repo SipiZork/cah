@@ -20,13 +20,14 @@ class SignUp extends React.Component {
   }
 
   handleSubmit = async event => {
+    const { setError } = this.props
     event.preventDefault()
     console.log("Hello");
 
     const { username, email, password, confirmPassword } = this.state
 
     if (password !== confirmPassword) {
-      alert("Password don't match")
+      setError('Regisztrációs hiba', 'A két jelszó nem egyezik meg')
       return
     }
 
@@ -34,6 +35,7 @@ class SignUp extends React.Component {
       const { user } = await auth.createUserWithEmailAndPassword(email, password)
 
       await createUserProfileDocument(user, { username })
+      window.location.reload(false)
 
       this.setState({
         username: '',
@@ -42,7 +44,7 @@ class SignUp extends React.Component {
         confirmPassword: ''
       })
     } catch (error) {
-      console.log(error)
+      setError('Regisztrációs hiba', error.message)
     }
   }
 

@@ -4,10 +4,10 @@ import { SignInSignUpContainer } from './sign-in-sign-up.styles'
 import SignIn from '../sign-in/sign-in.component'
 import SignUp from '../sign-up/sign-up.component'
 
-const SignInSignUp = () => (
+const SignInSignUp = ({ setError }) => (
   <SignInSignUpContainer>
-    <SignIn />
-    <SignUp />
+    <SignIn setError={setError} />
+    <SignUp setError={setError} />
   </SignInSignUpContainer>
 )
 

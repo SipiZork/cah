@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import * as basics from '../../css/variables'
+
 import CustomButton from '../custom-button/custom-button.components'
 
 export const SignUpContainer = styled.div`
@@ -7,7 +9,7 @@ export const SignUpContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgb(100,100,100);
+  background: ${basics.mainColor};
 `
 
 export const SingUpTitle = styled.h2`
@@ -15,7 +17,7 @@ export const SingUpTitle = styled.h2`
   font-weight: 400;
   font-size: 2rem;
   margin-top: 10px;
-  color: white;
+  color: black;
 `
 
 export const SignUpButton = styled(CustomButton)`

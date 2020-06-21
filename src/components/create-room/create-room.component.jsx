@@ -51,14 +51,15 @@ class CreateRoom extends React.Component {
 
   dataIsValid = () => {
     const { boardName, goalPoint, cardPacks } = this.state
+    const { setError } = this.props
     if (boardName.length > 25) {
-      this.setState({ errors: 'Túl hosszú a szoba neve (maximum 25 karakter)' })
+      setError('Sikertelen szoba létrehozás', 'Túl hosszú a szoba neve (maximum 25 karakter)')
       return false
     } else if (!Number.isInteger(parseInt(goalPoint))) {
-      this.setState({ errors: 'Nem számot adtál meg nyerési pontszámnak' })
+      setError('Sikertelen szoba létrehozás', 'Nem számot adtál meg nyerési pontszámnak')
       return false
     } else if (goalPoint > 20 || goalPoint < 2) {
-      this.setState({ errors: 'Nem megfelelő nyeréshez szükséges pontszámot adtál meg (minimum 2, max 20)' })
+      setError('Sikertelen szoba létrehozás', 'Nem megfelelő nyeréshez szükséges pontszámot adtál meg (minimum 2, max 20)')
       return false
     }
     return true
