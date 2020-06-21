@@ -23,4 +23,5 @@ export const BoardAdminMenuContainer = styled.div`
 `
 
 export const StartButton = styled(CustomButton)`
+  margin-bottom: 20px;
 `

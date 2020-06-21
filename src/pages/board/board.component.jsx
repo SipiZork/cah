@@ -334,6 +334,26 @@ class Board extends React.Component {
     }
   }
 
+  closeBoard = () => {
+    const { boardId } = this.props.match.params
+    const playersRef = firestore.collection('boards').doc(boardId).collection('players')
+    updateBoardData(boardId, { status: 'finished' })
+    setTimeout(() => {
+      playersRef.get().then(querySnapshot => {
+        querySnapshot.forEach(player => {
+          firestore.collection('users').doc(player.id).update({
+            gameSession: '',
+            status: 'inLobby'
+          })
+          playersRef.doc(player.id).update({
+            inGame: false
+          })
+          updateBoardData(boardId, { live: false })
+        })
+      })
+    }, 3000);
+  }
+
   render() {
     const { boardId } = this.props.match.params
     return (
@@ -342,6 +362,8 @@ class Board extends React.Component {
         <BoardAdminMenu
           menuClass={this.state.menuClass}
           startGame={this.startGame}
+          newRound={this.newRound}
+          closeBoard={this.closeBoard}
           boardStatus={this.state.board.status} />
         <BoardContainer>
           <Table>
