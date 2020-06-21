@@ -351,7 +351,7 @@ class Board extends React.Component {
           updateBoardData(boardId, { live: false })
         })
       })
-    }, 3000);
+    }, 10);
   }
 
   render() {
