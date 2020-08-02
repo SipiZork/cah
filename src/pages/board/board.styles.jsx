@@ -102,3 +102,20 @@ export const WhiteCardsContainer = styled.div`
   align-items: flex-start;
   flex-wrap: wrap;
 `
+
+export const NewHandContainer = styled.div`
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  right: 20px;
+  top: 20px;
+  height: 50px;
+  cursor: pointer;
+
+  p{
+    color: white;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+`

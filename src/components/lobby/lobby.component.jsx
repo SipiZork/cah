@@ -28,7 +28,7 @@ class Lobby extends React.Component {
       })
     }) */
     this.boardsListener()
-    // uploadCards()
+    //uploadCards()
     console.log(this.props.currentUser.id)
     setUserStatus(this.props.currentUser.id, 'inLobby')
     // addCardsToGame('wo0ZiIjr6T5bYf5mOneB')

@@ -1,7 +1,8 @@
 import React from 'react'
 import {
   firestore, addCardsToGame, addFullHandToEveryone, removeAllSelectedCards,
-  updateBoardData, revealBlackCard, selectNextPlayer, resetBoardDatas
+  updateBoardData, revealBlackCard, selectNextPlayer, resetBoardDatas,
+  addNewHand
 } from '../../firebase/firebase.utils'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -16,7 +17,7 @@ import PlayerPlayedCards from '../../components/player-played-cards/player-playe
 
 import {
   BoardContainer, Table, CardsContainer, BlackCardsContainer, HiddenBlackCards,
-  PlayerCardsContainer, RevealedBlackCard, WhiteCardsContainer
+  PlayerCardsContainer, RevealedBlackCard, WhiteCardsContainer, NewHandContainer
 } from './board.styles'
 
 class Board extends React.Component {
@@ -83,7 +84,7 @@ class Board extends React.Component {
     const { boardId } = this.props.match.params
     const cardsRef = firestore.collection('boards').doc(boardId).collection('players').doc(this.props.currentUser.id)
     this.unsunscribeFromHand = cardsRef.onSnapshot(snapshot => {
-      this.setState({ playerCards: snapshot.data().cards })
+      this.setState({ playerCards: snapshot.data().cards, playerNewHandAvailable: snapshot.data().newHands })
     })
   }
 
@@ -368,10 +369,27 @@ class Board extends React.Component {
     })
   }
 
+  requireNewHand = () => {
+    const { boardId } = this.props.match.params
+    const { id } = this.props.currentUser
+    if (this.state.playerNewHandAvailable > 0) {
+      addNewHand(boardId, id)
+    }
+  }
+
   render() {
     const { boardId } = this.props.match.params
     return (
       <React.Fragment>
+        <NewHandContainer onClick={this.requireNewHand}>
+          {this.state.board.status !== "waiting" && this.state.board.status !== "finished" ? (
+            this.state.playerNewHandAvailable > 0 ? (
+              <p>Új kéz kérési lehetőség: <span>{this.state.playerNewHandAvailable}</span>x</p>
+            ) : <p></p>
+          )
+            : <p></p>
+          }
+        </NewHandContainer>
         <BoardHeader toggleMenu={this.toggleMenu} />
         <BoardAdminMenu
           menuClass={this.state.menuClass}

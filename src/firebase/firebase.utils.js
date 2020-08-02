@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/database'
 import 'firebase/auth'
-import { cards } from '../cards'
+import { cards, cards2 } from '../cardsnew'
 
 const config = {
   apiKey: "AIzaSyCcgPbAEwgwn9IaxmdtsM8ZpY1AXijPZLA",
@@ -20,7 +20,7 @@ export const getLiveBoards = async () => {
 }
 
 export const uploadCards = () => {
-  const { name, white, black } = cards
+  const { name, white, black } = cards2
   firestore.collection('packs').add({
     white,
     black,
@@ -101,6 +101,7 @@ export const createLiveGame = (boardData, cardPacks, additionalData) => {
           inGame: true,
           points: 0,
           numberInRow: 1,
+          newHands: 2,
           selectedCards: [],
           cards: []
         })
@@ -139,6 +140,27 @@ export const addFullHandToEveryone = (boardId) => {
         firestore.collection('boards').doc(boardId).update({
           whiteCards: whiteCards
         })
+      })
+    })
+  })
+}
+
+export const addNewHand = (boardId, userId) => {
+  firestore.collection('boards').doc(boardId).collection('players').doc(userId).get().then(playerSnapshot => {
+    firestore.collection('boards').doc(boardId).get().then(boardSnapshot => {
+      const { whiteCards } = boardSnapshot.data()
+      const { newHands } = playerSnapshot.data()
+      let cards = []
+      for (var i = 0; i < 10; i++) {
+        const actCard = {text: whiteCards.shift(), revealed: false}
+        cards.push(actCard)
+      }
+      firestore.collection('boards').doc(boardId).collection('players').doc(userId).update({
+        cards: cards,
+        newHands: newHands-1
+      })
+      firestore.collection('boards').doc(boardId).update({
+        whiteCards: whiteCards
       })
     })
   })
@@ -217,6 +239,7 @@ export const setUserStatus = (userId, status) => {
       }
     })
 }
+
 
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return 

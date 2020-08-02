@@ -40,6 +40,7 @@ class LobbyBoard extends React.Component {
           inGame: true,
           points: 0,
           cards: [],
+          newHands: 2,
           numberInRow: this.state.nextPlayer,
           selectedCards: []
         })
